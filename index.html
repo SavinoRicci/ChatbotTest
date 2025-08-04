@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AZ Testing</title>
+    <title>Chatbot Testing</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,6 +31,7 @@
         }
     </style>
 <script type="text/javascript" charset="utf-8">
+  // Define the Genesys script
   (function (g, e, n, es, ys) {
     g['_genesysJs'] = e;
     g[e] = g[e] || function () {
@@ -38,17 +39,59 @@
     };
     g[e].t = 1 * new Date();
     g[e].c = es;
-    ys = document.createElement('script'); ys.async = 1; ys.src = n; ys.charset = 'utf-8'; document.head.appendChild(ys);
+    ys = document.createElement('script'); ys.async = 1; ys.src = n; ys.charset = 'utf-8'; 
+    document.head.appendChild(ys);
   })(window, 'Genesys', 'https://apps.mypurecloud.de/genesys-bootstrap/genesys.min.js', {
     environment: 'prod-euc1',
-    deploymentId: 'c27d55a9-f878-4f9e-8b10-fc130005faa5'
+    deploymentId: 'e64a1e77-46da-402e-8115-4b1a7cad4b77'
   });
+  
+  function toggleMessenger() {
+    Genesys("command", "Messenger.open", {},
+      function(o) { /* fulfilled callback */ },
+      function(o) { // if rejected
+        Genesys("command", "Messenger.close");
+      }
+    );
+  }
+
+ // Function to handle language change
+        function changeLanguage(selectElement) {
+            const selectedLocale = selectElement.value;
+            localStorage.setItem("selectedLocale", selectedLocale);
+            location.reload(); // Refresh the page
+        }
+
+        // Function to initialize Genesys with stored locale
+        function initializeGenesys() {
+            const locale = localStorage.getItem("selectedLocale") || "en-GB"; // Default to en-GB
+            Genesys("command", "Database.set", {
+                messaging: {
+                    customAttributes: {
+                        name: "Homer Simpson",
+                        locale: locale,
+                        webUserEmail: "test01@fedim.onmicrosoft.com"
+                    }
+                }
+            });
+
+            // Set dropdown to stored value
+            document.getElementById("languageSelect").value = locale;
+        }
+
+        window.onload = initializeGenesys;
+
 </script>
 </head>
 <body>
-
+    <label for="languageSelect">Choose Language:</label>
+    <select id="languageSelect" onchange="changeLanguage(this)">
+        <option value="en-GB">English (UK)</option>
+        <option value="fr-FR">Français (FR)</option>
+        <option value="de-DE">Deutsch (DE)</option>
+    </select>
     <header>
-        <h1>AZ Testing</h1>
+        <h1>Chatbot Testing</h1>
     </header>
 </body>
 </html>
